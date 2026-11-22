@@ -361,7 +361,8 @@ function renderChips() {
 const linkFor = (inv) => `${location.origin}/c/${inv.token}`;
 function waUrl(inv) {
   const ev = state.settings;
-  const text = `Olá, ${inv.name}! 💍\n\nCom muita alegria convidamos ${inv.members.length > 1 ? 'vocês' : 'você'} para o nosso casamento.\n\nEste é o seu convite pessoal e intransferível, válido para ${inv.members.length} ${inv.members.length > 1 ? 'pessoas' : 'pessoa'}. Por favor, confirme sua presença pelo link:\n${linkFor(inv)}\n\nCom carinho,\n${ev.bride} & ${ev.groom}`;
+  // sem emojis: alguns apps do WhatsApp os corrompem quando chegam pelo link
+  const text = `Olá, ${inv.name}!\n\nCom muita alegria convidamos ${inv.members.length > 1 ? 'vocês' : 'você'} para o nosso casamento.\n\nEste é o seu convite pessoal e intransferível, válido para ${inv.members.length} ${inv.members.length > 1 ? 'pessoas' : 'pessoa'}. Por favor, confirme sua presença pelo link:\n${linkFor(inv)}\n\nCom carinho,\n${ev.bride} & ${ev.groom}`;
   let phone = (inv.phone || '').replace(/\D/g, '');
   if (phone && phone.length <= 11) phone = '55' + phone;
   return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
