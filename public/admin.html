@@ -531,7 +531,8 @@ $('#sendSummary').addEventListener('click', async (e) => {
   catch (err) { toast(err.message); } finally { e.target.disabled = false; }
 });
 
-if (token) load().catch(() => {}); else showLogin();
+if (token) load().catch((err) => { if (token) { showLogin(); toast('Não foi possível carregar: ' + err.message); } });
+else showLogin();
 </script>
 </body>
 </html>
