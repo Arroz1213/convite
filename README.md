@@ -53,7 +53,7 @@ npx wrangler secret put ADMIN_PASSWORD
 npm run deploy
 ```
 
-O site fica em `https://convite-casamento.<seu-usuario>.workers.dev`. Acesse `/admin`, preencha
+O site fica em `https://convite-casamento.<seu-subdominio>.workers.dev` (este projeto: <https://convite-casamento.casamentoaliceegilton.workers.dev>). Acesse `/admin`, preencha
 a aba **Evento**, conecte o **Telegram** e comece a cadastrar os convites. Para usar um domínio
 próprio (ex.: `anaepedro.com.br`), adicione-o em *Workers → convite-casamento → Settings → Domains*.
 

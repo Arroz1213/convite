@@ -12,7 +12,7 @@ not_found_handling = "none"
 [[d1_databases]]
 binding = "DB"
 database_name = "convite-db"
-database_id = "COLE_AQUI_O_ID_DO_BANCO"
+database_id = "486505d8-26ca-464e-bf2f-af0c5a2aeb70"
 
 # Resumo diário no Telegram: 23:00 UTC = 20:00 em Brasília
 [triggers]
