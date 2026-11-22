@@ -1,0 +1,22 @@
+name = "convite-casamento"
+main = "src/worker.js"
+compatibility_date = "2025-09-01"
+
+# Arquivos estáticos (convite, painel admin). Rotas /api/* e /c/* caem no Worker.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+html_handling = "auto-trailing-slash"
+not_found_handling = "none"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "convite-db"
+database_id = "COLE_AQUI_O_ID_DO_BANCO"
+
+# Resumo diário no Telegram: 23:00 UTC = 20:00 em Brasília
+[triggers]
+crons = ["0 23 * * *"]
+
+# Senha do painel: em produção use `npx wrangler secret put ADMIN_PASSWORD`
+# Localmente, crie um arquivo .dev.vars com ADMIN_PASSWORD=suasenha

@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6F1E9">
+<meta name="robots" content="noindex, nofollow">
+<title>Painel dos Noivos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+  body{font-weight:400;font-size:.95rem}
+  body::before{display:none}
+  .wrap{max-width:760px;margin:0 auto;padding:0 16px}
+
+  /* login */
+  .login{min-height:100svh;display:grid;place-items:center;padding:24px}
+  .login form{width:100%;max-width:360px;text-align:center}
+  .login h1{font:300 2.2rem/1.1 var(--serif);margin:22px 0 6px}
+  .login p{color:var(--muted);margin-bottom:28px}
+
+  /* topo */
+  .top{position:sticky;top:0;z-index:30;background:rgba(246,241,233,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .top__row{display:flex;align-items:center;gap:12px;height:58px}
+  .top__mono{font:italic 400 1.5rem/1 var(--serif);color:var(--gold)}
+  .top__title{flex:1;font:500 .7rem/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+  .icon-btn{width:40px;height:40px;display:grid;place-items:center;border-radius:50%;border:0;background:transparent;cursor:pointer;color:var(--muted)}
+  .icon-btn:hover{background:var(--paper-deep);color:var(--ink)}
+  .icon-btn svg{width:20px;height:20px}
+  .tabs{display:flex;gap:4px;padding-bottom:10px;overflow-x:auto;scrollbar-width:none}
+  .tab{flex:1;min-width:max-content;padding:10px 14px;border:0;border-radius:99px;background:transparent;cursor:pointer;
+    font:500 .72rem/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .tab[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+
+  main{padding:20px 0 120px}
+  .panel[hidden]{display:none}
+
+  /* estatísticas */
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  @media(min-width:640px){.stats{grid-template-columns:repeat(4,1fr)}}
+  .stat{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .stat b{display:block;font:300 1.9rem/1 var(--sans)}
+  .stat span{display:block;margin-top:6px;font-size:.78rem;color:var(--muted)}
+  .stat small{color:var(--muted);font-size:.72rem}
+  .stat--ok b{color:var(--sage-deep)}
+  .stat--no b{color:var(--danger)}
+  .progress{height:6px;border-radius:99px;background:var(--paper-deep);overflow:hidden;margin:14px 0 4px;display:flex}
+  .progress i{display:block;height:100%}
+  .progress__legend{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted)}
+
+  .toolbar{display:flex;gap:8px;margin:22px 0 12px}
+  .toolbar .btn{min-height:46px;border-radius:8px}
+  .toolbar .btn--primary{flex:1}
+  .search{width:100%;height:46px;padding:0 16px 0 42px;border:1px solid var(--line);border-radius:8px;background:var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237D766B' stroke-width='1.6'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='m20 20-4.2-4.2'/%3E%3C/svg%3E") 14px center/18px no-repeat}
+  .search:focus,.input:focus,.textarea:focus{outline:none;border-color:var(--gold)}
+  .chips{display:flex;gap:6px;margin:12px 0 16px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .chip{flex-shrink:0;padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:transparent;cursor:pointer;font-size:.8rem;color:var(--muted)}
+  .chip[aria-pressed="true"]{border-color:var(--ink);color:var(--ink);background:var(--paper)}
+
+  /* lista */
+  .list{display:flex;flex-direction:column;gap:10px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px}
+  .card__head{display:flex;align-items:flex-start;gap:10px}
+  .card__name{flex:1;font:500 1.25rem/1.2 var(--serif)}
+  .card__meta{margin-top:4px;font-size:.8rem;color:var(--muted)}
+  .card__members{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+  .m{font-size:.78rem;padding:3px 9px;border-radius:99px;background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+  .m--yes{background:var(--sage-soft);color:var(--sage-deep);border-color:transparent}
+  .m--no{text-decoration:line-through;opacity:.7}
+  .card__msg{margin-top:10px;font:italic 400 1.02rem/1.4 var(--serif);color:var(--ink);padding-left:10px;border-left:2px solid var(--line-gold)}
+  .card__actions{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-top:14px}
+  .card__actions .btn{min-height:40px;border-radius:8px;font-size:.64rem;letter-spacing:.12em;padding:0 10px}
+  .card__actions .btn svg{width:15px;height:15px}
+  .pill{flex-shrink:0;font-size:.68rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:99px}
+  .pill--pending{background:#F2E9D8;color:#8C6D3F}
+  .pill--confirmed{background:var(--sage-soft);color:var(--sage-deep)}
+  .pill--declined{background:#F3E1DC;color:var(--danger)}
+  .empty{text-align:center;color:var(--muted);padding:48px 16px}
+  .empty b{display:block;font:300 1.6rem/1.2 var(--serif);color:var(--ink);margin-bottom:6px}
+
+  /* formulários */
+  .group{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px 16px;margin-bottom:14px}
+  .group h3{font:500 1.25rem/1.2 var(--serif);margin-bottom:14px}
+  .group p.help{color:var(--muted);font-size:.84rem;margin:-6px 0 14px}
+  .f{display:block;margin-bottom:14px}
+  .f:last-child{margin-bottom:0}
+  .f > span{display:block;font-size:.76rem;font-weight:500;color:var(--muted);margin-bottom:6px}
+  .input,.textarea{width:100%;min-height:46px;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:16px}
+  .textarea{min-height:90px;resize:vertical;line-height:1.5}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .toggle{display:flex;align-items:center;gap:12px;cursor:pointer;padding:4px 0}
+  .toggle input{position:absolute;opacity:0}
+  .toggle .sw{width:44px;height:26px;border-radius:99px;background:#d9d2c5;position:relative;flex-shrink:0;transition:background .25s}
+  .toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .25s}
+  .toggle input:checked + .sw{background:var(--sage)}
+  .toggle input:checked + .sw::after{transform:translateX(18px)}
+  .toggle input:focus-visible + .sw{outline:2px solid var(--gold);outline-offset:2px}
+  .toggle small{display:block;color:var(--muted);font-size:.8rem}
+  .savebar{position:fixed;left:0;right:0;bottom:0;z-index:25;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgba(246,241,233,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+  .savebar .btn{width:100%;max-width:728px;margin:0 auto;display:flex;border-radius:8px}
+  ol.steps{padding-left:20px;color:var(--muted);font-size:.88rem;margin-bottom:16px}
+  ol.steps li{margin-bottom:6px}
+  ol.steps b{color:var(--ink);font-weight:500}
+  .inline{display:flex;gap:8px}
+  .inline .input{flex:1}
+  .inline .btn{min-height:46px;border-radius:8px;flex-shrink:0}
+
+  /* sheet modal */
+  .sheet{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(30,28,24,.42);opacity:0;pointer-events:none;transition:opacity .25s}
+  .sheet.is-open{opacity:1;pointer-events:auto}
+  .sheet__box{width:100%;max-width:560px;max-height:92svh;overflow:auto;background:var(--bg);border-radius:18px 18px 0 0;padding:8px 16px calc(20px + env(safe-area-inset-bottom));
+    transform:translateY(30px);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+  .sheet.is-open .sheet__box{transform:none}
+  @media(min-width:640px){.sheet{align-items:center}.sheet__box{border-radius:14px;padding-bottom:20px}}
+  .sheet__grip{width:40px;height:4px;border-radius:9px;background:var(--line);margin:6px auto 12px}
+  .sheet__head{display:flex;align-items:center;margin-bottom:14px}
+  .sheet__head h2{flex:1;font:400 1.6rem/1.2 var(--serif)}
+  .mrow{display:flex;gap:8px;margin-bottom:8px}
+  .mrow .input{flex:1}
+  .mrow .icon-btn{flex-shrink:0;width:46px;height:46px;border-radius:8px;border:1px solid var(--line)}
+  .add-m{width:100%;min-height:44px;border:1px dashed var(--line-gold);border-radius:8px;background:transparent;color:var(--gold-deep);cursor:pointer;font-size:.86rem}
+  .danger-zone{display:grid;gap:8px;margin-top:6px}
+  .danger-zone .btn{min-height:44px;border-radius:8px;font-size:.66rem}
+  .btn--danger{background:transparent;border-color:rgba(160,80,63,.35);color:var(--danger)}
+  .linkbox{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;background:var(--paper-deep);font-size:.8rem;color:var(--muted);word-break:break-all;margin-bottom:14px}
+</style>
+</head>
+<body>
+
+<div id="login" class="login" hidden>
+  <form id="loginForm">
+    <div class="sprig" id="loginSprig"></div>
+    <h1>Painel dos Noivos</h1>
+    <p>Entre com a senha para gerenciar o casamento.</p>
+    <input class="input" type="password" id="pwd" placeholder="Senha" autocomplete="current-password" required style="text-align:center;margin-bottom:12px">
+    <button class="btn btn--primary btn--block" type="submit">Entrar</button>
+  </form>
+</div>
+
+<div id="appShell" hidden>
+  <header class="top">
+    <div class="wrap">
+      <div class="top__row">
+        <span class="top__mono" id="mono"></span>
+        <span class="top__title">Painel dos noivos</span>
+        <a class="icon-btn" href="/" target="_blank" title="Ver site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+        <button class="icon-btn" id="logout" title="Sair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 16l-4-4 4-4M6 12h10"/></svg></button>
+      </div>
+      <nav class="tabs" role="tablist">
+        <button class="tab" role="tab" data-tab="guests" aria-selected="true">Convidados</button>
+        <button class="tab" role="tab" data-tab="event" aria-selected="false">Evento</button>
+        <button class="tab" role="tab" data-tab="telegram" aria-selected="false">Telegram</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- Convidados -->
+    <section class="panel" id="tab-guests">
+      <div class="stats" id="stats"></div>
+      <div class="progress" id="progress"></div>
+      <div class="progress__legend" id="progressLegend"></div>
+      <div class="toolbar">
+        <button class="btn btn--primary" id="newInvite">+ Novo convite</button>
+        <a class="btn btn--ghost" id="exportCsv" href="#" title="Exportar planilha">CSV</a>
+      </div>
+      <input class="search" id="search" type="search" placeholder="Buscar convidado…">
+      <div class="chips" id="chips"></div>
+      <div class="list" id="list"></div>
+    </section>
+
+    <!-- Evento -->
+    <section class="panel" id="tab-event" hidden>
+      <form id="eventForm">
+        <div class="group">
+          <h3>Os noivos</h3>
+          <div class="row2">
+            <label class="f"><span>Noiva</span><input class="input" name="bride" required></label>
+            <label class="f"><span>Noivo</span><input class="input" name="groom" required></label>
+          </div>
+          <label class="f"><span>Frase de abertura</span><input class="input" name="headline"></label>
+          <label class="f"><span>Mensagem do convite</span><textarea class="textarea" name="message"></textarea></label>
+        </div>
+        <div class="group">
+          <h3>Versículo</h3>
+          <p class="help">Aparece em destaque no convite. Deixe em branco para ocultar.</p>
+          <label class="f"><span>Texto bíblico</span><textarea class="textarea" name="verse"></textarea></label>
+          <label class="f"><span>Referência</span><input class="input" name="verse_ref" placeholder="Ex.: Eclesiastes 4:12"></label>
+        </div>
+        <div class="group">
+          <h3>Data e horários</h3>
+          <label class="f"><span>Data do casamento</span><input class="input" type="date" name="date" required></label>
+          <div class="row2">
+            <label class="f"><span>Cerimônia</span><input class="input" type="time" name="ceremony_time"></label>
+            <label class="f"><span>Recepção</span><input class="input" type="time" name="party_time"></label>
+          </div>
+          <label class="f"><span>Confirmar presença até</span><input class="input" type="date" name="rsvp_deadline"></label>
+          <label class="toggle f"><input type="checkbox" name="allow_changes"><span class="sw"></span>
+            <span>Convidado pode alterar a resposta<small>Até o prazo de confirmação</small></span></label>
+        </div>
+        <div class="group">
+          <h3>Cerimônia (igreja)</h3>
+          <label class="f"><span>Nome do local</span><input class="input" name="ceremony_name"></label>
+          <label class="f"><span>Endereço</span><input class="input" name="ceremony_address"></label>
+          <label class="f"><span>Link do Google Maps (opcional, para o pino exato)</span><input class="input" name="ceremony_maps_url" placeholder="https://maps.app.goo.gl/…"></label>
+        </div>
+        <div class="group">
+          <h3>Recepção (chácara)</h3>
+          <label class="f"><span>Nome do local</span><input class="input" name="party_name"></label>
+          <label class="f"><span>Endereço</span><input class="input" name="party_address"></label>
+          <label class="f"><span>Link do Google Maps (opcional, para o pino exato)</span><input class="input" name="party_maps_url" placeholder="https://maps.app.goo.gl/…"></label>
+        </div>
+        <div class="group">
+          <h3>Detalhes</h3>
+          <label class="f"><span>Traje</span><input class="input" name="dress_code" placeholder="Ex.: Esporte fino"></label>
+          <label class="f"><span>Foto de capa (URL de imagem, opcional)</span><input class="input" name="cover_image" placeholder="https://…/foto.jpg"></label>
+        </div>
+        <div class="savebar"><button class="btn btn--primary" type="submit">Salvar informações</button></div>
+      </form>
+    </section>
+
+    <!-- Telegram -->
+    <section class="panel" id="tab-telegram" hidden>
+      <form id="tgForm">
+        <div class="group">
+          <h3>Conectar ao Telegram</h3>
+          <ol class="steps">
+            <li>No Telegram, abra o <b>@BotFather</b>, envie <b>/newbot</b> e siga os passos.</li>
+            <li>Copie o <b>token</b> que ele enviar e cole abaixo.</li>
+            <li>Abra o seu bot e envie <b>oi</b> (ou adicione o bot ao grupo dos noivos e envie uma mensagem lá).</li>
+            <li>Toque em <b>Detectar</b> para descobrir o chat automaticamente e salve.</li>
+          </ol>
+          <label class="f"><span>Token do bot</span><input class="input" name="telegram_token" autocomplete="off" placeholder="123456789:AA…"></label>
+          <label class="f"><span>Chat ID</span>
+            <div class="inline"><input class="input" name="telegram_chat_id" inputmode="numeric"><button class="btn btn--ghost" type="button" id="detect">Detectar</button></div>
+          </label>
+        </div>
+        <div class="group">
+          <h3>Notificações</h3>
+          <label class="toggle f"><input type="checkbox" name="telegram_notify_each"><span class="sw"></span>
+            <span>Avisar a cada resposta<small>Mensagem na hora em que alguém confirmar ou recusar</small></span></label>
+          <label class="toggle f"><input type="checkbox" name="telegram_daily"><span class="sw"></span>
+            <span>Resumo diário às 20h<small>Totais, lista de confirmados e quem ainda não respondeu</small></span></label>
+        </div>
+        <button class="btn btn--ghost btn--block" type="button" id="sendSummary" style="border-radius:8px">Enviar resumo agora</button>
+        <div class="savebar"><button class="btn btn--primary" type="submit">Salvar configurações</button></div>
+      </form>
+    </section>
+  </main>
+</div>
+
+<!-- Modal convite -->
+<div class="sheet" id="sheet" aria-hidden="true">
+  <div class="sheet__box" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet__grip"></div>
+    <div class="sheet__head">
+      <h2 id="sheetTitle">Novo convite</h2>
+      <button class="icon-btn" type="button" data-close title="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <form id="inviteForm">
+      <div id="linkBox"></div>
+      <label class="f"><span>Nome do convite</span><input class="input" name="name" placeholder="Ex.: Família Souza" required></label>
+      <label class="f"><span>WhatsApp (opcional)</span><input class="input" name="phone" type="tel" inputmode="tel" placeholder="(11) 99999-9999"></label>
+      <div class="f">
+        <span>Pessoas com direito a este convite</span>
+        <div id="members"></div>
+        <button class="add-m" type="button" id="addMember">+ Adicionar pessoa</button>
+      </div>
+      <label class="f"><span>Observações internas (opcional)</span><textarea class="textarea" name="notes" style="min-height:64px"></textarea></label>
+      <button class="btn btn--primary btn--block" type="submit" style="border-radius:8px">Salvar convite</button>
+      <div class="danger-zone" id="dangerZone"></div>
+    </form>
+  </div>
+</div>
+
+<script src="/common.js"></script>
+<script>
+const $ = (s, el = document) => el.querySelector(s);
+const ICONS = {
+  copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>',
+  wa: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.9 11.9 0 0 0 4.6 4c1.7.7 2.3.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+};
+const pl = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+const STATUS = { pending: 'Pendente', confirmed: 'Confirmado', declined: 'Não vai' };
+
+let token = localStorage.getItem('adminToken');
+let state = null;
+let filter = 'all';
+let editingId = null;
+
+async function api(path, opts = {}) {
+  const r = await fetch('/api/admin/' + path, {
+    ...opts,
+    headers: { 'content-type': 'application/json', authorization: 'Bearer ' + token, ...(opts.headers || {}) },
+  });
+  if (r.status === 401) { logout(); throw new Error('Sessão expirada'); }
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || 'Erro');
+  return data;
+}
+
+function showLogin() {
+  $('#appShell').hidden = true;
+  $('#login').hidden = false;
+  $('#loginSprig').innerHTML = SPRIG;
+  $('#pwd').focus();
+}
+function logout() { localStorage.removeItem('adminToken'); token = null; showLogin(); }
+
+$('#loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = e.submitter; btn.disabled = true;
+  try {
+    const r = await fetch('/api/admin/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ password: $('#pwd').value }) });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error);
+    token = d.token; localStorage.setItem('adminToken', token);
+    $('#login').hidden = true;
+    await load();
+  } catch (err) { toast(err.message); } finally { btn.disabled = false; }
+});
+$('#logout').addEventListener('click', logout);
+
+// ── Abas ──
+document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach((x) => x.setAttribute('aria-selected', x === t));
+  document.querySelectorAll('.panel').forEach((p) => (p.hidden = p.id !== 'tab-' + t.dataset.tab));
+  window.scrollTo(0, 0);
+}));
+
+async function load() {
+  state = await api('data');
+  $('#appShell').hidden = false;
+  $('#mono').textContent = `${state.settings.bride[0] || ''}&${state.settings.groom[0] || ''}`;
+  renderStats(); renderChips(); renderList(); fillForms();
+}
+
+function renderStats() {
+  const s = state.stats;
+  $('#stats').innerHTML = `
+    <div class="stat stat--ok"><b>${s.people_confirmed}</b><span>Pessoas confirmadas</span><small>${pl(s.invites_confirmed, "convite")}</small></div>
+    <div class="stat"><b>${s.people_pending}</b><span>Aguardando resposta</span><small>${pl(s.invites_pending, "convite")}</small></div>
+    <div class="stat stat--no"><b>${s.people_declined}</b><span>Não vão</span><small>${pl(s.invites_declined, "convite")}</small></div>
+    <div class="stat"><b>${s.people_total}</b><span>Total de convidados</span><small>${pl(s.invites_total, "convite")} · ${s.invites_opened} ${s.invites_opened === 1 ? "aberto" : "abertos"}</small></div>`;
+  const pct = (n) => (s.people_total ? (n / s.people_total) * 100 : 0);
+  $('#progress').innerHTML = `<i style="width:${pct(s.people_confirmed)}%;background:var(--sage)"></i><i style="width:${pct(s.people_declined)}%;background:#D7AFA4"></i>`;
+  $('#progressLegend').innerHTML = `<span>${Math.round(pct(s.people_confirmed))}% confirmados</span><span>${Math.round(pct(s.people_confirmed + s.people_declined))}% responderam</span>`;
+}
+
+function renderChips() {
+  const s = state.stats;
+  const chips = [['all', `Todos · ${s.invites_total}`], ['confirmed', `Confirmados · ${s.invites_confirmed}`], ['pending', `Pendentes · ${s.invites_pending}`], ['declined', `Não vão · ${s.invites_declined}`], ['unopened', 'Não abriram']];
+  $('#chips').innerHTML = chips.map(([k, l]) => `<button class="chip" data-f="${k}" aria-pressed="${filter === k}">${l}</button>`).join('');
+  $('#chips').querySelectorAll('.chip').forEach((c) => c.addEventListener('click', () => { filter = c.dataset.f; renderChips(); renderList(); }));
+}
+
+const linkFor = (inv) => `${location.origin}/c/${inv.token}`;
+function waUrl(inv) {
+  const ev = state.settings;
+  const text = `Olá, ${inv.name}! 💍\n\nCom muita alegria convidamos ${inv.members.length > 1 ? 'vocês' : 'você'} para o nosso casamento.\n\nEste é o seu convite pessoal e intransferível, válido para ${inv.members.length} ${inv.members.length > 1 ? 'pessoas' : 'pessoa'}. Por favor, confirme sua presença pelo link:\n${linkFor(inv)}\n\nCom carinho,\n${ev.bride} & ${ev.groom}`;
+  let phone = (inv.phone || '').replace(/\D/g, '');
+  if (phone && phone.length <= 11) phone = '55' + phone;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+}
+
+function renderList() {
+  const q = $('#search').value.trim().toLowerCase();
+  const norm = (t) => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const items = state.invites.filter((inv) => {
+    if (filter === 'unopened' ? inv.open_count > 0 : filter !== 'all' && inv.status !== filter) return false;
+    if (!q) return true;
+    return norm(inv.name + ' ' + inv.members.map((m) => m.name).join(' ')).includes(norm(q));
+  });
+  if (!state.invites.length) {
+    $('#list').innerHTML = `<div class="empty"><b>Nenhum convite ainda</b>Toque em “Novo convite” para adicionar o primeiro.</div>`;
+    return;
+  }
+  if (!items.length) { $('#list').innerHTML = `<div class="empty">Nenhum convite encontrado.</div>`; return; }
+  $('#list').innerHTML = items.map((inv) => {
+    const going = inv.members.filter((m) => m.attending === 1).length;
+    const meta = inv.status === 'confirmed' ? `${going} de ${inv.members.length} confirmados` : `${inv.members.length} ${inv.members.length > 1 ? 'pessoas' : 'pessoa'}`;
+    const opened = inv.open_count ? `Abriu ${inv.open_count}×` : 'Ainda não abriu';
+    return `<article class="card">
+      <div class="card__head">
+        <div style="flex:1"><div class="card__name">${esc(inv.name)}</div><div class="card__meta">${meta} · ${opened}</div></div>
+        <span class="pill pill--${inv.status}">${STATUS[inv.status]}</span>
+      </div>
+      <div class="card__members">${inv.members.map((m) => `<span class="m ${inv.status !== 'pending' ? (m.attending === 1 ? 'm--yes' : 'm--no') : ''}">${esc(m.name)}</span>`).join('')}</div>
+      ${inv.message ? `<p class="card__msg">“${esc(inv.message)}”</p>` : ''}
+      <div class="card__actions">
+        <button class="btn btn--ghost" data-copy="${inv.id}">${ICONS.copy} Copiar link</button>
+        <a class="btn btn--ghost" href="${waUrl(inv)}" target="_blank" rel="noopener">${ICONS.wa} WhatsApp</a>
+        <button class="btn btn--ghost" data-edit="${inv.id}" title="Editar" aria-label="Editar">${ICONS.edit}</button>
+      </div>
+    </article>`;
+  }).join('');
+}
+$('#search').addEventListener('input', renderList);
+$('#list').addEventListener('click', (e) => {
+  const c = e.target.closest('[data-copy]'), ed = e.target.closest('[data-edit]');
+  if (c) copy(linkFor(state.invites.find((i) => i.id == c.dataset.copy)));
+  if (ed) openSheet(state.invites.find((i) => i.id == ed.dataset.edit));
+});
+
+async function copy(text) {
+  try { await navigator.clipboard.writeText(text); }
+  catch { const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }
+  toast('Link copiado');
+}
+
+$('#exportCsv').addEventListener('click', async (e) => {
+  e.preventDefault();
+  const r = await fetch('/api/admin/export.csv', { headers: { authorization: 'Bearer ' + token } });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(await r.blob()); a.download = 'convidados.csv'; a.click();
+});
+
+// ── Modal de convite ──
+const sheet = $('#sheet');
+function memberRow(m = {}) {
+  const row = document.createElement('div');
+  row.className = 'mrow';
+  row.innerHTML = `<input class="input" placeholder="Nome completo" value="${esc(m.name || '')}" data-id="${m.id || ''}"><button class="icon-btn" type="button" aria-label="Remover">${ICONS.x}</button>`;
+  row.querySelector('input').addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault(); // Enter adiciona a próxima pessoa em vez de enviar
+    if (e.target.value.trim()) $('#addMember').click();
+  });
+  row.querySelector('button').addEventListener('click', () => {
+    if ($('#members').children.length > 1) row.remove(); else row.querySelector('input').value = '';
+  });
+  return row;
+}
+$('#addMember').addEventListener('click', () => { const r = memberRow(); $('#members').appendChild(r); r.querySelector('input').focus(); });
+
+function openSheet(inv) {
+  editingId = inv ? inv.id : null;
+  const f = $('#inviteForm');
+  f.reset();
+  $('#sheetTitle').textContent = inv ? 'Editar convite' : 'Novo convite';
+  f.name.value = inv?.name || ''; f.phone.value = inv?.phone || ''; f.notes.value = inv?.notes || '';
+  $('#members').innerHTML = '';
+  (inv?.members?.length ? inv.members : [{}]).forEach((m) => $('#members').appendChild(memberRow(m)));
+  $('#linkBox').innerHTML = inv ? `<div class="linkbox"><span style="flex:1">${esc(linkFor(inv))}</span><button class="icon-btn" type="button" id="copyInSheet">${ICONS.copy}</button></div>` : '';
+  $('#copyInSheet')?.addEventListener('click', () => copy(linkFor(inv)));
+  $('#dangerZone').innerHTML = inv ? `
+    ${inv.status !== 'pending' ? '<button class="btn btn--ghost" type="button" data-act="reset">Zerar resposta do convidado</button>' : ''}
+    <button class="btn btn--ghost" type="button" data-act="token">Gerar novo link (invalida o atual)</button>
+    <button class="btn btn--danger" type="button" data-act="delete">Excluir convite</button>` : '';
+  sheet.classList.add('is-open'); sheet.setAttribute('aria-hidden', 'false');
+  if (!inv) setTimeout(() => f.name.focus(), 250);
+}
+function closeSheet() { sheet.classList.remove('is-open'); sheet.setAttribute('aria-hidden', 'true'); }
+$('#newInvite').addEventListener('click', () => openSheet(null));
+sheet.addEventListener('click', (e) => { if (e.target === sheet || e.target.closest('[data-close]')) closeSheet(); });
+document.addEventListener('keydown', (e) => e.key === 'Escape' && closeSheet());
+
+$('#inviteForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const f = e.target, btn = e.submitter;
+  const members = [...$('#members').querySelectorAll('input')].map((i) => ({ id: i.dataset.id || null, name: i.value.trim() })).filter((m) => m.name);
+  const body = JSON.stringify({ name: f.name.value, phone: f.phone.value, notes: f.notes.value, members });
+  btn.disabled = true;
+  try {
+    if (editingId) await api('invites/' + editingId, { method: 'PUT', body });
+    else await api('invites', { method: 'POST', body });
+    closeSheet(); await load();
+    toast(editingId ? 'Convite atualizado' : 'Convite criado — agora é só enviar o link');
+  } catch (err) { toast(err.message); } finally { btn.disabled = false; }
+});
+
+$('#dangerZone').addEventListener('click', async (e) => {
+  const act = e.target.closest('[data-act]')?.dataset.act;
+  if (!act) return;
+  const inv = state.invites.find((i) => i.id === editingId);
+  const msgs = {
+    reset: `Zerar a resposta de “${inv.name}”? O convite voltará a ficar pendente.`,
+    token: `Gerar um novo link para “${inv.name}”? O link antigo deixará de funcionar.`,
+    delete: `Excluir o convite “${inv.name}”? Essa ação não pode ser desfeita.`,
+  };
+  if (!confirm(msgs[act])) return;
+  try {
+    if (act === 'delete') await api('invites/' + editingId, { method: 'DELETE' });
+    else await api(`invites/${editingId}/${act}`, { method: 'POST' });
+    closeSheet(); await load();
+    toast({ reset: 'Resposta zerada', token: 'Novo link gerado', delete: 'Convite excluído' }[act]);
+  } catch (err) { toast(err.message); }
+});
+
+// ── Formulários de configuração ──
+function fillForms() {
+  for (const form of [$('#eventForm'), $('#tgForm')]) {
+    for (const el of form.elements) {
+      if (!el.name || !(el.name in state.settings)) continue;
+      if (el.type === 'checkbox') el.checked = state.settings[el.name] === '1';
+      else el.value = state.settings[el.name];
+    }
+  }
+}
+function formData(form) {
+  const out = {};
+  for (const el of form.elements) {
+    if (!el.name) continue;
+    out[el.name] = el.type === 'checkbox' ? (el.checked ? '1' : '0') : el.value;
+  }
+  return out;
+}
+for (const id of ['eventForm', 'tgForm']) {
+  $('#' + id).addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('[type=submit]'); btn.disabled = true;
+    try { await api('settings', { method: 'PUT', body: JSON.stringify(formData(e.target)) }); await load(); toast('Salvo com sucesso'); }
+    catch (err) { toast(err.message); } finally { btn.disabled = false; }
+  });
+}
+$('#detect').addEventListener('click', async (e) => {
+  e.target.disabled = true;
+  try {
+    const d = await api('telegram/detect', { method: 'POST', body: JSON.stringify({ token: $('#tgForm').telegram_token.value }) });
+    $('#tgForm').telegram_chat_id.value = d.chat_id;
+    toast(`Chat encontrado: ${d.chat_name}. Agora toque em Salvar.`);
+  } catch (err) { toast(err.message); } finally { e.target.disabled = false; }
+});
+$('#sendSummary').addEventListener('click', async (e) => {
+  e.target.disabled = true;
+  try { await api('telegram/summary', { method: 'POST' }); toast('Resumo enviado ao Telegram'); }
+  catch (err) { toast(err.message); } finally { e.target.disabled = false; }
+});
+
+if (token) load().catch(() => {}); else showLogin();
+</script>
+</body>
+</html>

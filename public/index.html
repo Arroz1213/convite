@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#E6DED0">
+<title>Casamento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Great+Vibes&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+  body{background-color:var(--marble);background-image:var(--noise)}
+  main{min-height:100svh;display:grid;place-items:center;padding:0}
+  @media (min-width:680px){main{padding:56px 24px}}
+  .card{position:relative;width:100%;max-width:560px;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:72px 32px;background-color:var(--ivory);background-image:var(--paper-tex);box-shadow:0 40px 70px -40px var(--shadow-warm);container-type:inline-size}
+  @media (min-width:680px){.card{min-height:auto;padding:96px 48px}}
+  .card::before{content:"";position:absolute;inset:10px;border:1px solid var(--hairline);pointer-events:none}
+  .cross__svg{width:15px;margin:0 auto 22px}
+  h1{color:var(--olive-deep);margin:26px 0 22px}
+  h1 span{display:block;font:400 clamp(1.7rem, calc(112cqi / var(--len, 6)), 3.2rem)/1.05 var(--display);letter-spacing:.09em}
+  h1 i{display:block;font:400 3.2rem/.9 var(--script);color:var(--gold);font-style:normal}
+  .date{font:400 .78rem/1.8 var(--display);letter-spacing:.3em;color:var(--text)}
+  .divider{width:min(220px,70%);margin:34px auto 0}
+  .divider svg{width:100%;height:auto;overflow:visible}
+  .note{margin-top:30px;max-width:30ch;font:italic 400 1.12rem/1.6 var(--serif);color:var(--text-soft)}
+  .note b{display:block;font:400 1.9rem/1.2 var(--script);color:var(--gold);margin-bottom:6px}
+</style>
+</head>
+<body>
+<main><div class="card" id="m"><div class="loader"></div></div></main>
+<script src="/common.js"></script>
+<script>
+fetch('/api/event').then((r) => r.json()).then(({ event: ev }) => {
+  const d = parseDate(ev.date);
+  document.title = `${ev.bride} & ${ev.groom}`;
+  document.getElementById('m').innerHTML = `
+    <div class="reveal">${BOT.cross()}</div>
+    <p class="eyebrow reveal">${esc(ev.headline)}</p>
+    <h1 class="reveal"><span style="--len:${Math.max(4, ev.bride.length)}">${esc(ev.bride)}</span><i>&amp;</i><span style="--len:${Math.max(4, ev.groom.length)}">${esc(ev.groom)}</span></h1>
+    <p class="date reveal">${esc(fmtDots(d))}</p>
+    <div class="divider reveal">${BOT.divider('rose')}</div>
+    <p class="note reveal"><b>Recebeu nosso convite?</b>Abra o link pessoal que enviamos para você para ver todos os detalhes e confirmar sua presença.</p>`;
+  observeReveal();
+});
+</script>
+</body>
+</html>

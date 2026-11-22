@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#E6DED0">
+<meta name="robots" content="noindex, nofollow">
+<title>Convite de Casamento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+  body{background-color:var(--marble);background-image:var(--noise),
+    radial-gradient(70% 50% at 20% 0%, rgba(246,240,229,.8), transparent 70%),
+    radial-gradient(60% 60% at 100% 100%, rgba(217,182,166,.12), transparent 70%);
+    background-attachment:fixed}
+
+  /* ───────────── Envelope ───────────── */
+  .intro{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(26px,5vh,44px);
+    padding:32px 20px calc(32px + env(safe-area-inset-bottom));background-color:var(--marble);background-image:inherit;
+    transition:opacity 1.1s ease,transform 1.3s cubic-bezier(.4,0,.2,1)}
+  .intro.is-leaving{opacity:0;transform:scale(1.07);pointer-events:none}
+  .intro__to{text-align:center;transition:opacity .8s ease}
+  .intro__to small{display:block;font:500 .6rem/1 var(--sans);letter-spacing:.36em;text-transform:uppercase;color:var(--text-soft)}
+  .intro__to span{display:block;margin-top:12px;font:italic 400 1.55rem/1.25 var(--serif);color:var(--olive-deep);max-width:20ch}
+  .intro__hint{font:500 .6rem/1 var(--sans);letter-spacing:.34em;text-transform:uppercase;color:var(--gold);animation:hint 3.6s ease-in-out infinite;transition:opacity .6s ease}
+  .intro.is-opening .intro__hint,.intro.is-opening .intro__to{opacity:0;animation:none}
+  @keyframes hint{0%,100%{opacity:.5}50%{opacity:1}}
+
+  .env{position:relative;width:min(86vw,440px);aspect-ratio:1.45;transition:transform 1.4s cubic-bezier(.4,0,.2,1)}
+  .intro.is-lifting .env{transform:translateY(22%)}
+  .env__shadow{position:absolute;inset:0;box-shadow:0 2px 4px rgba(110,84,44,.08),0 34px 50px -34px var(--shadow-warm);border-radius:2px}
+  .env__back{position:absolute;inset:0;border-radius:2px;background:linear-gradient(180deg,#D9CFBD 0%,#E3DACB 38%,#E8E0D2 100%)}
+  .env__letter{position:absolute;left:6.5%;right:6.5%;top:5%;height:88%;z-index:2;background-color:var(--ivory);background-image:var(--paper-tex);
+    display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:9%;gap:7%;
+    box-shadow:0 1px 3px rgba(110,84,44,.12);transition:transform 1.5s cubic-bezier(.33,0,.2,1)}
+  .env__letter::before{content:"";position:absolute;inset:6px;border:1px solid var(--hairline)}
+  .env__letter .cross__svg{width:11px}
+  .env__letter b{font:400 clamp(.85rem,3.6vw,1.1rem)/1 var(--display);letter-spacing:.2em;color:var(--olive-deep)}
+  .env__letter b i{font:400 1.5em/1 var(--script);color:var(--gold);letter-spacing:0;margin:0 .2em}
+  .env__letter small{font:500 .5rem/1 var(--sans);letter-spacing:.34em;color:var(--text-soft)}
+  .intro.is-lifting .env__letter{transform:translateY(-56%)}
+
+  .env__layer{position:absolute;inset:0;width:100%;height:100%}
+  .env__pocket{z-index:3;filter:drop-shadow(0 -1px 1px rgba(110,84,44,.06))}
+  .env__flap{z-index:4;transform-origin:50% 0;transition:transform 1.25s cubic-bezier(.45,0,.25,1);filter:drop-shadow(0 2px 2px rgba(110,84,44,.12))}
+  .env__flap .face-in{opacity:0;transition:opacity 0s .62s}
+  .env__flap .face-out{transition:opacity 0s .62s}
+  .intro.is-opening .env__flap{transform:scaleY(-1)}
+  .intro.is-opening .env__flap .face-in{opacity:1}
+  .intro.is-opening .env__flap .face-out{opacity:0}
+  .intro.is-lifting .env__flap{z-index:1}
+
+  .seal{position:absolute;left:50%;top:56%;z-index:5;width:27%;aspect-ratio:1;transform:translate(-50%,-50%);padding:0;border:0;background:none;cursor:pointer;
+    filter:drop-shadow(0 3px 3px rgba(40,36,18,.3)) drop-shadow(0 8px 12px rgba(110,84,44,.18));
+    transition:transform .5s cubic-bezier(.33,0,.2,1),opacity .7s ease;-webkit-tap-highlight-color:transparent}
+  .seal:hover{transform:translate(-50%,-50%) scale(1.03)}
+  .seal:active,.intro.is-pressed .seal{transform:translate(-50%,-50%) scale(.95)}
+  .seal:focus-visible{outline:1px solid var(--gold);outline-offset:6px;border-radius:50%}
+  .intro.is-opening .seal{opacity:0;transform:translate(-50%,-58%) scale(1.06)}
+  .seal svg{width:100%;height:100%}
+
+  /* ───────────── Folha do convite ───────────── */
+  .stage{opacity:0;transform:scale(.985) translateY(10px);transition:opacity 1.4s ease,transform 1.6s cubic-bezier(.22,.61,.36,1)}
+  .stage.is-in{opacity:1;transform:none}
+  .sheet{position:relative;max-width:620px;margin:0 auto;background-color:var(--ivory);background-image:var(--paper-tex);
+    box-shadow:0 1px 2px rgba(110,84,44,.07),0 40px 70px -40px var(--shadow-warm)}
+  .sheet::before,.sheet::after{content:"";position:absolute;pointer-events:none}
+  .sheet::before{inset:10px;border:1px solid var(--hairline)}
+  .sheet::after{inset:14px;border:1px solid var(--hairline-soft)}
+  @media (min-width:680px){.stage{padding:64px 24px 80px}.sheet::before{inset:16px}.sheet::after{inset:21px}}
+
+  .corner{position:absolute;width:clamp(118px,34vw,190px);pointer-events:none;z-index:1}
+  .corner svg{width:100%;height:auto;overflow:visible}
+  .corner--tl{top:2px;left:2px}
+  .corner--br{bottom:2px;right:2px;transform:rotate(180deg)}
+  .breeze{transform-origin:10% 10%;animation:breeze 11s ease-in-out infinite alternate}
+  .corner--br .breeze{animation-duration:13s;animation-delay:-4s}
+  @keyframes breeze{0%{transform:translate(0,0) scale(1)}50%{transform:translate(.8px,.6px) scale(1.006)}100%{transform:translate(-.4px,1px) scale(1.003)}}
+
+  .sheet__inner{position:relative;z-index:2;container-type:inline-size;padding:clamp(108px,30vw,150px) clamp(30px,8vw,64px) 0;text-align:center}
+
+  .section{padding:clamp(44px,12vw,64px) 0}
+  .divider{width:min(240px,74%);margin:0 auto}
+  .divider svg{width:100%;height:auto;overflow:visible}
+
+  .kicker{font:500 .6rem/1.8 var(--sans);letter-spacing:.34em;text-transform:uppercase;color:var(--olive)}
+  .script{font:400 clamp(1.9rem,8cqi,2.4rem)/1.1 var(--script);color:var(--gold)}
+  .h-display{font:400 clamp(.95rem,4.6cqi,1.2rem)/1.5 var(--display);letter-spacing:.2em;color:var(--olive-deep);text-transform:uppercase}
+  .serif-lead{font:italic 300 clamp(1.18rem,5.2cqi,1.38rem)/1.6 var(--serif);color:var(--text)}
+  .note{font:400 .8rem/1.75 var(--sans);color:var(--text-soft)}
+
+  /* cabeçalho */
+  .head .cross__svg{width:16px;margin:0 auto}
+  .wreath{position:relative;width:clamp(120px,40cqi,150px);margin:22px auto 0}
+  .wreath__svg{width:100%;height:auto;overflow:visible}
+  .wreath__mono{position:absolute;left:0;right:0;top:47.5%;transform:translateY(-50%);font:400 1.45rem/1 var(--display);color:var(--olive-deep);letter-spacing:.06em}
+  .wreath__mono i{font:400 1.25rem/1 var(--script);color:var(--gold);margin:0 .08em;font-style:normal}
+  .head__blessing{margin:26px auto 0;max-width:30ch;font:italic 400 1.08rem/1.6 var(--serif);color:var(--text-soft)}
+  .names{margin:30px 0 8px;color:var(--olive-deep)}
+  .names span{display:block;font:400 clamp(1.7rem, calc(112cqi / var(--len, 6)), 3.5rem)/1.05 var(--display);letter-spacing:.09em;padding-left:.09em}
+  .names .amp{font:400 clamp(2.8rem,15cqi,3.8rem)/.9 var(--script);color:var(--gold);letter-spacing:0;padding:0;margin:.06em 0 .02em}
+  .head__msg{margin:26px auto 0;max-width:32ch}
+  .head__to{margin-top:30px}
+  .head__to span{display:block;margin-top:6px;font:400 1.35rem/1.35 var(--serif);color:var(--olive-deep)}
+  .text-link{display:inline-block;margin-top:24px;font:500 .6rem/1 var(--sans);letter-spacing:.3em;text-transform:uppercase;color:var(--olive);text-decoration:none;padding:10px 2px;border-bottom:1px solid var(--hairline)}
+  .text-link:hover{border-bottom-color:var(--olive)}
+
+  .photo{margin:40px auto 0;padding:8px;border:1px solid var(--hairline);max-width:360px;background:rgba(255,253,247,.4)}
+  .photo img{width:100%;aspect-ratio:4/5;object-fit:cover;filter:sepia(.12) saturate(.88)}
+
+  /* versículo */
+  .verse blockquote{margin:30px auto 0;max-width:26ch;font:italic 300 clamp(1.5rem,7cqi,2rem)/1.45 var(--serif);color:var(--olive-deep)}
+  .verse cite{display:block;margin-top:22px;font:500 .6rem/1 var(--sans);font-style:normal;letter-spacing:.34em;text-transform:uppercase;color:var(--gold)}
+  .verse .divider{margin-top:34px}
+
+  /* data */
+  .date{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:clamp(12px,4cqi,22px);max-width:340px;margin:24px auto 0}
+  .date__side{padding:10px 0;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);font:400 .7rem/1 var(--display);letter-spacing:.22em;color:var(--text)}
+  .date__day{font:400 clamp(3.2rem,16cqi,4.2rem)/1 var(--display);color:var(--olive-deep)}
+  .date__month{margin-top:14px;font:400 .95rem/1 var(--display);letter-spacing:.34em;color:var(--olive-deep)}
+  .date__year{margin-top:10px;font:400 .72rem/1 var(--display);letter-spacing:.4em;color:var(--text-soft)}
+  .countdown{display:flex;justify-content:center;margin-top:36px}
+  .countdown div{padding:0 clamp(12px,4.5cqi,22px);text-align:center}
+  .countdown div + div{border-left:1px solid var(--hairline-soft)}
+  .countdown b{display:block;font:300 clamp(1.6rem,7.5cqi,2rem)/1 var(--serif);color:var(--text);font-variant-numeric:lining-nums tabular-nums}
+  .countdown small{display:block;margin-top:8px;font:500 .52rem/1 var(--sans);letter-spacing:.26em;text-transform:uppercase;color:var(--text-soft)}
+
+  /* locais */
+  .place + .place{margin-top:clamp(48px,13cqi,64px)}
+  .place__time{margin-top:14px;font:400 1.6rem/1 var(--display);letter-spacing:.1em;color:var(--olive-deep)}
+  .place__name{margin-top:14px;font:500 clamp(1.3rem,6cqi,1.55rem)/1.3 var(--serif);color:var(--text)}
+  .place__addr{margin:8px auto 0;max-width:34ch}
+  .map{margin:24px auto 0;padding:6px;border:1px solid var(--hairline);max-width:440px}
+  .map iframe{width:100%;aspect-ratio:3/2;border:0;background:var(--cream);filter:grayscale(.6) sepia(.28) contrast(.92) brightness(1.03)}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:440px;margin:14px auto 0}
+  .place__sep{width:min(150px,50%);margin:clamp(40px,11cqi,56px) auto 0}
+
+  /* confirmação */
+  .rsvp .h-display{margin-top:6px}
+  .exclusive{display:flex;align-items:center;gap:14px;margin:22px auto 0;max-width:340px;font:500 .56rem/1.4 var(--sans);letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+  .exclusive::before,.exclusive::after{content:"";flex:1;height:1px;background:var(--hairline-soft)}
+  .rsvp__intro{margin:22px auto 0;max-width:34ch}
+  .guests{list-style:none;padding:0;margin:26px auto 0;max-width:380px;text-align:left;border-top:1px solid var(--hairline-soft)}
+  .guest{display:flex;align-items:center;gap:16px;min-height:60px;padding:8px 4px;border-bottom:1px solid var(--hairline-soft);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .guest input{position:absolute;opacity:0;pointer-events:none}
+  .tick{flex-shrink:0;width:22px;height:22px;border:1px solid var(--gold);display:grid;place-items:center;color:var(--olive);background:rgba(255,253,247,.5);transition:background-color .4s ease}
+  .tick svg{width:16px;height:16px;opacity:0;transform:scale(.8);transition:opacity .35s ease,transform .35s ease}
+  .guest input:checked + .tick svg{opacity:1;transform:none}
+  .guest input:focus-visible + .tick{outline:1px solid var(--olive);outline-offset:3px}
+  .guest__name{flex:1;font:400 1.22rem/1.25 var(--serif);color:var(--text);transition:color .4s ease}
+  .guest__state{font:italic 400 .95rem/1 var(--serif);color:var(--text-soft);transition:color .4s ease}
+  .guest input:not(:checked) ~ .guest__name{color:var(--text-soft)}
+  .guest input:checked ~ .guest__state{color:var(--olive)}
+
+  .words{max-width:380px;margin:30px auto 0;text-align:left}
+  .words label{display:block;text-align:center}
+  .words textarea{display:block;width:100%;min-height:118px;margin-top:10px;padding:4px 2px 0;border:0;resize:vertical;background:transparent;
+    font:italic 400 1.12rem/32px var(--serif);color:var(--text);
+    background-image:linear-gradient(transparent 31px,var(--hairline-soft) 31px);background-size:100% 32px;background-attachment:local}
+  .words textarea:focus{outline:none;background-image:linear-gradient(transparent 31px,var(--hairline) 31px)}
+  .words textarea::placeholder{color:#9b968a}
+  .rsvp__actions{display:grid;gap:12px;max-width:380px;margin:30px auto 0}
+  .rsvp__deadline{margin-top:22px;font:italic 400 1rem/1.5 var(--serif);color:var(--text-soft)}
+  .quiet-link{background:none;border:0;padding:12px;font:500 .58rem/1 var(--sans);letter-spacing:.28em;text-transform:uppercase;color:var(--text-soft);cursor:pointer;text-decoration:underline;text-decoration-color:var(--hairline);text-underline-offset:6px}
+  .quiet-link:hover{color:var(--olive)}
+
+  .done .h-display{margin-top:4px}
+  .done__names{list-style:none;padding:0;margin:22px 0 0}
+  .done__names li{font:italic 400 1.3rem/1.85 var(--serif);color:var(--olive-deep)}
+  .done__quote{margin:24px auto 0;max-width:30ch;font:italic 300 1.15rem/1.55 var(--serif);color:var(--text-soft)}
+
+  /* rodapé */
+  .foot{padding:clamp(40px,10cqi,56px) 0 clamp(150px,40vw,210px)}
+  .foot__mono{display:inline-flex;align-items:center;justify-content:center;gap:.1em;width:62px;height:62px;margin-top:26px;border:1px solid var(--hairline);border-radius:50%;
+    font:400 .95rem/1 var(--display);letter-spacing:.06em;color:var(--olive-deep)}
+  .foot__mono i{font:400 .95rem/1 var(--script);color:var(--gold);font-style:normal}
+  .foot .script{margin-top:22px;font-size:1.9rem}
+  .foot__names{margin-top:6px;font:400 .82rem/1 var(--display);letter-spacing:.3em;color:var(--olive-deep)}
+  .foot__date{margin-top:12px;font:500 .56rem/1 var(--sans);letter-spacing:.34em;color:var(--text-soft)}
+
+  .state-msg{min-height:100svh;display:grid;place-items:center;text-align:center;padding:32px}
+  .state-msg h1{font:400 1.2rem/1.5 var(--display);letter-spacing:.2em;color:var(--olive-deep);margin:22px 0 12px}
+  .state-msg p{max-width:30ch;margin:0 auto}
+
+  @media (prefers-reduced-motion:reduce){.breeze,.intro__hint{animation:none}}
+</style>
+</head>
+<body>
+
+<div id="app"><div class="state-msg"><div class="loader" aria-label="Carregando"></div></div></div>
+
+<script src="/common.js"></script>
+<script>
+(async function () {
+  const app = document.getElementById('app');
+  const token = location.pathname.split('/').filter(Boolean)[1];
+  let data;
+  try {
+    const r = await fetch('/api/invite/' + encodeURIComponent(token || ''));
+    data = await r.json();
+    if (!r.ok) throw new Error(data.error);
+  } catch (e) {
+    app.innerHTML = `<div class="state-msg"><div>${BOT.divider('rose')}<h1>Convite não encontrado</h1>
+      <p class="note">Verifique se o link está completo, exatamente como você recebeu dos noivos.</p></div></div>`;
+    return;
+  }
+
+  const ev = data.event;
+  let invite = data.invite;
+  let canChange = data.can_change;
+  let editing = false;
+  const A = (ev.bride.trim()[0] || '').toUpperCase(), B = (ev.groom.trim()[0] || '').toUpperCase();
+  const mono = `${esc(A)}<i>&amp;</i>${esc(B)}`;
+  const dateObj = parseDate(ev.date);
+  const target = new Date(`${ev.date}T${ev.ceremony_time || '00:00'}:00-03:00`);
+  const time = (t) => (t ? t.replace(':', 'h') : '');
+  document.title = `${ev.bride} & ${ev.groom}`;
+
+  app.innerHTML = `
+  <div class="stage" id="stage">
+    <article class="sheet">
+      <div class="corner corner--tl"><div class="breeze">${BOT.corner(3, 'a')}</div></div>
+      <div class="corner corner--br"><div class="breeze">${BOT.corner(14, 'b')}</div></div>
+
+      <div class="sheet__inner">
+        <header class="head">
+          <div class="reveal">${BOT.cross()}</div>
+          <div class="wreath reveal">${BOT.wreath()}<div class="wreath__mono">${mono}</div></div>
+          <p class="head__blessing reveal">${esc(ev.headline)}</p>
+          <h1 class="names reveal" aria-label="${esc(ev.bride)} e ${esc(ev.groom)}">
+            <span style="--len:${Math.max(4, ev.bride.trim().length)}">${esc(ev.bride)}</span>
+            <span class="amp" aria-hidden="true">&amp;</span>
+            <span style="--len:${Math.max(4, ev.groom.trim().length)}">${esc(ev.groom)}</span>
+          </h1>
+          <p class="head__msg serif-lead reveal">${esc(ev.message)}</p>
+          <div class="head__to reveal">
+            <p class="script">Com muito carinho</p>
+            <span>${esc(invite.name)}</span>
+          </div>
+          <a class="text-link reveal" href="#rsvp" id="toRsvp">Confirmar presença</a>
+          ${ev.cover_image ? `<figure class="photo reveal"><img src="${esc(ev.cover_image)}" alt="${esc(ev.bride)} e ${esc(ev.groom)}" loading="lazy"></figure>` : ''}
+        </header>
+
+        ${ev.verse ? `<section class="section verse" aria-label="Versículo">
+          <div class="divider reveal">${BOT.divider('rose')}</div>
+          <blockquote class="reveal">${esc(ev.verse)}</blockquote>
+          ${ev.verse_ref ? `<cite class="reveal">${esc(ev.verse_ref)}</cite>` : ''}
+          <div class="divider reveal">${BOT.divider('olive')}</div>
+        </section>` : '<div class="section"><div class="divider">' + BOT.divider('olive') + '</div></div>'}
+
+        <section class="when reveal" aria-label="Data">
+          <p class="kicker">Save the date</p>
+          <p class="date__month">${esc(fmtMonth(dateObj).toUpperCase())}</p>
+          <div class="date">
+            <span class="date__side">${esc(fmtWeekday(dateObj).replace('-feira', '').toUpperCase())}</span>
+            <span class="date__day">${esc(fmt(dateObj, { day: '2-digit' }))}</span>
+            <span class="date__side">${esc(time(ev.ceremony_time).toUpperCase())}</span>
+          </div>
+          <p class="date__year">${esc(fmt(dateObj, { year: 'numeric' }))}</p>
+          <div class="countdown" id="countdown" aria-label="Contagem regressiva"></div>
+        </section>
+
+        <section class="section" aria-label="Locais">
+          <div class="divider reveal" style="margin-bottom:clamp(40px,11cqi,56px)">${BOT.divider('olive')}</div>
+          ${placeBlock('Cerimônia religiosa', ev.ceremony_time, ev.ceremony_name, ev.ceremony_address, ev.ceremony_maps_url)}
+          ${ev.party_name || ev.party_address ? `<div class="place__sep reveal">${BOT.divider('rose')}</div>` : ''}
+          ${placeBlock('Recepção', ev.party_time, ev.party_name, ev.party_address, ev.party_maps_url)}
+        </section>
+
+        ${ev.dress_code ? `<section class="reveal" style="padding-bottom:clamp(44px,12vw,64px)">
+          <p class="kicker">Traje</p>
+          <p class="serif-lead" style="margin-top:8px;font-style:italic">${esc(ev.dress_code)}</p>
+        </section>` : ''}
+
+        <div class="divider reveal">${BOT.divider('rose')}</div>
+
+        <section class="section rsvp" id="rsvp" aria-label="Confirmação de presença">
+          <div id="rsvpBox" class="reveal"></div>
+        </section>
+
+        <footer class="foot">
+          <div class="divider">${BOT.divider('olive')}</div>
+          <div class="foot__mono">${mono}</div>
+          <p class="script">Com amor,</p>
+          <p class="foot__names">${esc(ev.bride.toUpperCase())} &amp; ${esc(ev.groom.toUpperCase())}</p>
+          <p class="foot__date">${esc(fmtDots(dateObj))}</p>
+          <a class="text-link" href="${googleCalUrl()}" target="_blank" rel="noopener">Salvar a data na agenda</a>
+        </footer>
+      </div>
+    </article>
+  </div>`;
+
+  renderRsvp();
+  startCountdown(target);
+  lazyMaps();
+  document.getElementById('toRsvp').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('rsvp').scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth' });
+  });
+
+  // ── Envelope ──
+  const stage = document.getElementById('stage');
+  if (safeSession('env-' + token)) {
+    stage.classList.add('is-in');
+    observeReveal();
+  } else {
+    showEnvelope();
+  }
+
+  function showEnvelope() {
+    const intro = document.createElement('div');
+    intro.className = 'intro';
+    intro.innerHTML = `
+      <p class="intro__to"><small>Especialmente para</small><span>${esc(invite.name)}</span></p>
+      <div class="env">
+        <div class="env__shadow"></div>
+        <div class="env__back"></div>
+        <div class="env__letter">${BOT.cross()}<b>${esc(ev.bride.toUpperCase())}<i>&amp;</i>${esc(ev.groom.toUpperCase())}</b><small>${esc(fmtDots(dateObj))}</small></div>
+        <svg class="env__layer env__pocket" viewBox="0 0 145 100" aria-hidden="true">
+          <defs>
+            <linearGradient id="pkL" x1="0" x2="1"><stop offset="0" stop-color="#EDE4D4"/><stop offset="1" stop-color="#F3ECE0"/></linearGradient>
+            <linearGradient id="pkR" x1="1" x2="0"><stop offset="0" stop-color="#EDE4D4"/><stop offset="1" stop-color="#F3ECE0"/></linearGradient>
+            <linearGradient id="pkB" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#F1EADD"/><stop offset="1" stop-color="#F8F3EA"/></linearGradient>
+          </defs>
+          <path d="M0 0L69 55.5Q72.5 58 69 60.5L0 100Z" fill="url(#pkL)"/>
+          <path d="M145 0L76 55.5Q72.5 58 76 60.5L145 100Z" fill="url(#pkR)"/>
+          <path d="M0 100L65 53Q72.5 48 80 53L145 100Z" fill="url(#pkB)" stroke="#B08A3C" stroke-opacity=".3" stroke-width=".3"/>
+          <rect x=".2" y=".2" width="144.6" height="99.6" fill="none" stroke="#B08A3C" stroke-opacity=".35" stroke-width=".3"/>
+        </svg>
+        <svg class="env__layer env__flap" viewBox="0 0 145 100" aria-hidden="true">
+          <defs>
+            <linearGradient id="flO" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3ECE0"/><stop offset="1" stop-color="#F8F3EA"/></linearGradient>
+            <pattern id="flP" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(30)">
+              <path d="M2 5C3 3 5.5 3 7 5C5.5 7 3 7 2 5Z" fill="#D9B6A6" fill-opacity=".55"/>
+            </pattern>
+          </defs>
+          <g class="face-out">
+            <path d="M0 0H145L79 54Q72.5 59.5 66 54Z" fill="url(#flO)" stroke="#B08A3C" stroke-opacity=".38" stroke-width=".3"/>
+          </g>
+          <g class="face-in">
+            <path d="M0 0H145L79 54Q72.5 59.5 66 54Z" fill="#E5C8BC"/>
+            <path d="M0 0H145L79 54Q72.5 59.5 66 54Z" fill="url(#flP)" stroke="#B08A3C" stroke-opacity=".4" stroke-width=".3"/>
+          </g>
+        </svg>
+        <button class="seal" type="button" aria-label="Abrir o convite">${BOT.seal(A, B)}</button>
+      </div>
+      <p class="intro__hint">Toque no lacre para abrir</p>`;
+    document.body.appendChild(intro);
+    document.documentElement.style.overflow = 'hidden';
+
+    const seal = intro.querySelector('.seal');
+    let opened = false;
+    const open = () => {
+      if (opened) return;
+      opened = true;
+      safeSession('env-' + token, '1');
+      if (reducedMotion()) {
+        intro.classList.add('is-leaving');
+        finish(300);
+        return;
+      }
+      intro.classList.add('is-pressed');
+      setTimeout(() => { intro.classList.remove('is-pressed'); intro.classList.add('is-opening'); }, 240);
+      setTimeout(() => intro.classList.add('is-lifting'), 1550);
+      setTimeout(() => intro.classList.add('is-leaving'), 3250);
+      finish(3400);
+    };
+    function finish(ms) {
+      setTimeout(() => {
+        document.documentElement.style.overflow = '';
+        stage.classList.add('is-in');
+        observeReveal();
+      }, ms);
+      setTimeout(() => intro.remove(), ms + 1400);
+    }
+    seal.addEventListener('click', open);
+    intro.querySelector('.env').addEventListener('click', open);
+    seal.focus({ preventScroll: true });
+  }
+
+  function placeBlock(kicker, t, name, address, mapsUrl) {
+    if (!name && !address) return '';
+    const q = [name, address].filter(Boolean).join(', ');
+    const gmaps = mapsUrl || 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+    const waze = 'https://waze.com/ul?navigate=yes&q=' + encodeURIComponent(address || name);
+    return `<div class="place reveal">
+      <p class="kicker">${kicker}</p>
+      ${t ? `<p class="place__time">${esc(time(t).toUpperCase())}</p>` : ''}
+      <h3 class="place__name">${esc(name)}</h3>
+      <p class="place__addr note">${esc(address)}</p>
+      <div class="map"><iframe title="Mapa: ${esc(name)}" data-src="https://maps.google.com/maps?q=${encodeURIComponent(q)}&z=15&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+      <div class="actions">
+        <a class="btn btn--primary btn--sm" href="${esc(gmaps)}" target="_blank" rel="noopener">Abrir no mapa</a>
+        <a class="btn btn--secondary btn--sm" href="${esc(waze)}" target="_blank" rel="noopener">Waze</a>
+      </div>
+    </div>`;
+  }
+
+  function renderRsvp() {
+    const box = document.getElementById('rsvpBox');
+    const total = invite.members.length;
+    const responded = invite.status !== 'pending';
+    const plural = total > 1;
+
+    if (responded && !editing) {
+      const going = invite.members.filter((m) => m.attending === 1);
+      const ok = invite.status === 'confirmed';
+      box.innerHTML = `<div class="done">
+        <p class="script">${ok ? 'Obrigado' : 'Com carinho'}</p>
+        <h2 class="h-display">${ok ? 'Presença confirmada' : 'Sentiremos sua falta'}</h2>
+        <p class="serif-lead" style="margin-top:16px">${ok
+          ? (going.length > 1 ? 'Mal podemos esperar para celebrar com vocês.' : 'Mal podemos esperar para celebrar com você.')
+          : 'Obrigado por nos avisar. Você estará em nossas orações e em nossos corações.'}</p>
+        ${ok ? `<ul class="done__names">${going.map((m) => `<li>${esc(m.name)}</li>`).join('')}</ul>` : ''}
+        ${invite.message ? `<p class="done__quote">“${esc(invite.message)}”</p>` : ''}
+        ${ok ? `<div class="actions" style="margin-top:30px">
+          <a class="btn btn--secondary btn--sm" href="${googleCalUrl()}" target="_blank" rel="noopener">Google Agenda</a>
+          <button class="btn btn--secondary btn--sm" id="icsBtn" type="button">Apple · Outlook</button>
+        </div>` : ''}
+        ${canChange ? `<button class="quiet-link" id="editBtn" type="button" style="margin-top:18px">Alterar resposta</button>`
+          : `<p class="rsvp__deadline">Precisa alterar algo? Fale diretamente com os noivos.</p>`}
+      </div>`;
+      document.getElementById('editBtn')?.addEventListener('click', () => { editing = true; renderRsvp(); });
+      document.getElementById('icsBtn')?.addEventListener('click', downloadIcs);
+      return;
+    }
+
+    if (!canChange) {
+      box.innerHTML = `<p class="kicker">Confirmação de presença</p><h2 class="h-display" style="margin-top:6px">Confirmações encerradas</h2>
+        <p class="serif-lead" style="margin-top:16px">O prazo para confirmar terminou. Por gentileza, fale diretamente com os noivos.</p>`;
+      return;
+    }
+
+    const pre = (m) => (responded ? m.attending === 1 : true);
+    box.innerHTML = `
+      <p class="script">Sua presença é o nosso presente</p>
+      <h2 class="h-display">Confirmação de presença</h2>
+      <p class="exclusive">Pessoal e intransferível</p>
+      <p class="rsvp__intro serif-lead">Reservamos ${plural ? `<strong style="font-weight:500">${total} lugares</strong>` : '<strong style="font-weight:500">um lugar</strong>'} em sua honra. Marque, por gentileza, quem estará presente:</p>
+      <form id="rsvpForm" novalidate>
+        <ul class="guests">
+          ${invite.members.map((m) => `<li><label class="guest">
+            <input type="checkbox" name="m" value="${m.id}" ${pre(m) ? 'checked' : ''}>
+            <span class="tick">${ICON.check}</span>
+            <span class="guest__name">${esc(m.name)}</span>
+            <span class="guest__state" data-state></span>
+          </label></li>`).join('')}
+        </ul>
+        <div class="words">
+          <label class="kicker" for="msg">Uma palavra aos noivos</label>
+          <textarea id="msg" maxlength="600" placeholder="Escreva aqui, se desejar…">${esc(invite.message || '')}</textarea>
+        </div>
+        <div class="rsvp__actions">
+          <button class="btn btn--primary btn--block" id="confirmBtn" type="submit"></button>
+          <button class="btn btn--secondary btn--block" id="declineBtn" type="button">${plural ? 'Não poderemos comparecer' : 'Não poderei comparecer'}</button>
+          ${editing ? `<button class="quiet-link" id="cancelEdit" type="button">Cancelar</button>` : ''}
+        </div>
+        ${ev.rsvp_deadline ? `<p class="rsvp__deadline">Pedimos a gentileza de confirmar até ${esc(fmtShort(parseDate(ev.rsvp_deadline)))}.</p>` : ''}
+      </form>`;
+
+    const form = document.getElementById('rsvpForm');
+    const btn = document.getElementById('confirmBtn');
+    const sync = () => {
+      const n = form.querySelectorAll('input:checked').length;
+      form.querySelectorAll('.guest').forEach((g) => {
+        g.querySelector('[data-state]').textContent = g.querySelector('input').checked ? 'presente' : 'ausente';
+      });
+      btn.textContent = n === 0 ? 'Marque quem estará presente' : !plural ? 'Confirmar presença' : `Confirmar presença · ${n}`;
+      btn.disabled = n === 0;
+    };
+    form.addEventListener('change', sync);
+    sync();
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const ids = [...form.querySelectorAll('input:checked')].map((i) => Number(i.value));
+      if (ids.length) submit(ids, btn);
+    });
+    document.getElementById('declineBtn').addEventListener('click', (e) => {
+      if (confirm(plural ? 'Confirmar que ninguém deste convite poderá comparecer?' : 'Confirmar que você não poderá comparecer?')) submit([], e.currentTarget);
+    });
+    document.getElementById('cancelEdit')?.addEventListener('click', () => { editing = false; renderRsvp(); });
+  }
+
+  async function submit(ids, btn) {
+    const label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+    try {
+      const r = await fetch(`/api/invite/${token}/rsvp`, {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ attending: ids, message: document.getElementById('msg').value }),
+      });
+      const res = await r.json();
+      if (!r.ok) throw new Error(res.error);
+      invite = res.invite;
+      canChange = res.can_change;
+      editing = false;
+      renderRsvp();
+      document.getElementById('rsvp').scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
+      if (invite.status === 'confirmed') celebrate();
+    } catch (err) {
+      toast(err.message || 'Não foi possível enviar. Verifique sua conexão e tente novamente.');
+      btn.disabled = false;
+      btn.textContent = label;
+    }
+  }
+
+  function startCountdown(t) {
+    const el = document.getElementById('countdown');
+    if (isNaN(t)) { el.remove(); return; }
+    const tick = () => {
+      let d = Math.max(0, t - Date.now());
+      if (d === 0) { el.innerHTML = `<p class="script">Hoje é o grande dia</p>`; return; }
+      el.innerHTML = [[86400000, 'dias'], [3600000, 'horas'], [60000, 'min'], [1000, 'seg']].map(([ms, l]) => {
+        const v = Math.floor(d / ms); d -= v * ms; return `<div><b>${String(v).padStart(2, '0')}</b><small>${l}</small></div>`;
+      }).join('');
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  function lazyMaps() {
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.src = e.target.dataset.src; io.unobserve(e.target); }
+    }), { rootMargin: '400px' });
+    document.querySelectorAll('iframe[data-src]').forEach((f) => io.observe(f));
+  }
+
+  function calDates() {
+    const start = new Date(`${ev.date}T${ev.ceremony_time || '16:00'}:00-03:00`);
+    const end = new Date(start.getTime() + 7 * 3600000);
+    const f = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    return [f(start), f(end)];
+  }
+  function calDetails() {
+    return `Cerimônia: ${ev.ceremony_time} — ${ev.ceremony_name}, ${ev.ceremony_address}\nRecepção: ${ev.party_time} — ${ev.party_name}, ${ev.party_address}`;
+  }
+  function googleCalUrl() {
+    const [s, e] = calDates();
+    const p = new URLSearchParams({ action: 'TEMPLATE', text: `Casamento ${ev.bride} & ${ev.groom}`, dates: `${s}/${e}`,
+      details: calDetails(), location: `${ev.ceremony_name}, ${ev.ceremony_address}` });
+    return 'https://calendar.google.com/calendar/render?' + p.toString();
+  }
+  function downloadIcs() {
+    const [s, e] = calDates();
+    const escIcs = (t) => String(t).replace(/[\\;,]/g, (c) => '\\' + c).replace(/\n/g, '\\n');
+    const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//convite//PT-BR', 'BEGIN:VEVENT', `UID:${token}@convite`,
+      `DTSTAMP:${s}`, `DTSTART:${s}`, `DTEND:${e}`, `SUMMARY:${escIcs(`Casamento ${ev.bride} & ${ev.groom}`)}`,
+      `LOCATION:${escIcs(`${ev.ceremony_name}, ${ev.ceremony_address}`)}`, `DESCRIPTION:${escIcs(calDetails())}`,
+      'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+    a.download = 'casamento.ics';
+    a.click();
+  }
+})();
+</script>
+</body>
+</html>
